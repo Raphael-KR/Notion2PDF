@@ -1,0 +1,316 @@
+@font-face {
+  font-family: "Pretendard";
+  src: url("../fonts/Pretendard-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pretendard";
+  src: url("../fonts/Pretendard-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@page {
+  size: A4;
+  margin: 18mm;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  color: #1f2937;
+  font-family: "Pretendard", sans-serif;
+  font-size: 10.5pt;
+  line-height: 1.65;
+}
+
+body {
+  margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: #111827;
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0 0 8pt;
+}
+
+h1 {
+  border-bottom: 1.2pt solid #111827;
+  font-size: 24pt;
+  margin-bottom: 16pt;
+  padding-bottom: 10pt;
+}
+
+h2 {
+  break-after: avoid;
+  font-size: 15pt;
+  margin-top: 20pt;
+}
+
+h3 {
+  break-after: avoid;
+  font-size: 12.5pt;
+  margin-top: 14pt;
+}
+
+h4 {
+  break-after: avoid;
+  font-size: 11.5pt;
+  margin-top: 12pt;
+}
+
+p {
+  margin: 0 0 9pt;
+}
+
+p.notion-empty {
+  min-height: 8pt;
+}
+
+.toc {
+  border: 1pt solid #d8dee9;
+  margin: 12pt 0 18pt;
+  padding: 10pt 14pt;
+}
+
+.toc ol {
+  margin: 0 0 0 16pt;
+  padding: 0;
+}
+
+.toc li {
+  margin: 3pt 0;
+}
+
+.toc-level-2 {
+  margin-left: 10pt;
+}
+
+.toc-level-3 {
+  margin-left: 20pt;
+}
+
+.toc-level-4 {
+  margin-left: 30pt;
+}
+
+.notion-color-gray {
+  color: rgba(125, 122, 117, 1);
+}
+
+.notion-color-brown {
+  color: rgba(159, 118, 90, 1);
+}
+
+.notion-color-orange {
+  color: rgba(210, 123, 45, 1);
+}
+
+.notion-color-yellow {
+  color: rgba(203, 148, 52, 1);
+}
+
+.notion-color-green,
+.notion-color-teal {
+  color: rgba(80, 148, 110, 1);
+}
+
+.notion-color-blue {
+  color: rgba(56, 125, 201, 1);
+}
+
+.notion-color-purple {
+  color: rgba(154, 107, 180, 1);
+}
+
+.notion-color-pink {
+  color: rgba(193, 76, 138, 1);
+}
+
+.notion-color-red {
+  color: rgba(207, 81, 72, 1);
+}
+
+.notion-color-gray_background {
+  background: rgba(240, 239, 237, 1);
+}
+
+.notion-color-brown_background {
+  background: rgba(245, 237, 233, 1);
+}
+
+.notion-color-orange_background {
+  background: rgba(251, 235, 222, 1);
+}
+
+.notion-color-yellow_background {
+  background: rgba(249, 243, 220, 1);
+}
+
+.notion-color-green_background,
+.notion-color-teal_background {
+  background: rgba(232, 241, 236, 1);
+}
+
+.notion-color-blue_background {
+  background: rgba(229, 242, 252, 1);
+}
+
+.notion-color-purple_background {
+  background: rgba(243, 235, 249, 1);
+}
+
+.notion-color-pink_background {
+  background: rgba(250, 233, 241, 1);
+}
+
+.notion-color-red_background {
+  background: rgba(252, 233, 231, 1);
+}
+
+h1[class*="_background"],
+h2[class*="_background"],
+h3[class*="_background"],
+h4[class*="_background"],
+p[class*="_background"],
+blockquote[class*="_background"] {
+  border-radius: 2pt;
+  padding: 3pt 5pt;
+}
+
+.column-list > .children {
+  border-collapse: separate;
+  border-spacing: 14pt 0;
+  display: table;
+  margin: 10pt 0 14pt;
+  table-layout: fixed;
+  width: calc(100% + 28pt);
+  margin-left: -14pt;
+}
+
+.column {
+  display: table-cell;
+  min-width: 0;
+  vertical-align: top;
+  width: 50%;
+}
+
+.column .children > :first-child {
+  margin-top: 0;
+}
+
+table {
+  border-collapse: collapse;
+  font-size: 9.2pt;
+  margin: 10pt 0 16pt;
+  page-break-inside: auto;
+  width: 100%;
+}
+
+thead {
+  display: table-header-group;
+}
+
+tfoot {
+  display: table-footer-group;
+}
+
+tr {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+th,
+td {
+  border: 0.75pt solid #cfd7e3;
+  padding: 5pt 6pt;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  background: #eaf0f8;
+  color: #111827;
+  font-weight: 700;
+}
+
+.page-break {
+  break-before: page;
+}
+
+.avoid-break {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.callout {
+  border-left: 4pt solid #8aa8d8;
+  border-radius: 6pt;
+  margin: 12pt 0 16pt;
+  padding: 10pt 12pt;
+}
+
+.callout.notion-color-blue_background {
+  border-left-color: #2563eb;
+}
+
+.callout.notion-color-red_background {
+  border-left-color: #e11d48;
+}
+
+.callout.notion-color-green_background,
+.callout.notion-color-teal_background {
+  border-left-color: #0f766e;
+}
+
+.callout.notion-color-yellow_background {
+  border-left-color: #ca8a04;
+}
+
+.callout-icon {
+  display: inline-block;
+  margin-right: 3pt;
+}
+
+.checklist {
+  list-style: none;
+  margin: 6pt 0 14pt;
+  padding-left: 0;
+}
+
+.checklist li {
+  margin: 5pt 0;
+  padding-left: 16pt;
+  position: relative;
+}
+
+.checklist li::before {
+  color: #2563eb;
+  content: "□";
+  left: 0;
+  position: absolute;
+}
+
+.checklist li.done::before {
+  content: "✓";
+  font-weight: 700;
+}
+
+.link-list {
+  margin: 6pt 0 14pt 16pt;
+}
+
+a {
+  color: #1d4ed8;
+  text-decoration: none;
+}

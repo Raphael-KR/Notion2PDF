@@ -1,0 +1,204 @@
+@font-face {
+  font-family: "Pretendard";
+  src: url("../fonts/Pretendard-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pretendard";
+  src: url("../fonts/Pretendard-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@page {
+  size: A4;
+  margin: 22mm 18mm 20mm;
+
+  @top-left {
+    content: string(document-title);
+    color: #5f6673;
+    font-family: "Pretendard", sans-serif;
+    font-size: 8.5pt;
+  }
+
+  @top-right {
+    content: "WeasyPrint PDF";
+    color: #5f6673;
+    font-family: "Pretendard", sans-serif;
+    font-size: 8.5pt;
+  }
+
+  @bottom-center {
+    content: counter(page) " / " counter(pages);
+    color: #5f6673;
+    font-family: "Pretendard", sans-serif;
+    font-size: 9pt;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  color: #1f2937;
+  font-family: "Pretendard", sans-serif;
+  font-size: 10.5pt;
+  line-height: 1.65;
+}
+
+body {
+  margin: 0;
+}
+
+h1,
+h2,
+h3 {
+  color: #111827;
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0 0 8pt;
+}
+
+h1 {
+  border-bottom: 1.2pt solid #111827;
+  font-size: 24pt;
+  margin-bottom: 16pt;
+  padding-bottom: 10pt;
+  string-set: document-title content();
+}
+
+h2 {
+  break-after: avoid;
+  font-size: 15pt;
+  margin-top: 20pt;
+}
+
+p {
+  margin: 0 0 9pt;
+}
+
+.document-meta {
+  color: #6b7280;
+  font-size: 9pt;
+  margin-bottom: 18pt;
+}
+
+.summary {
+  background: #f3f6fa;
+  border-left: 4pt solid #2563eb;
+  margin: 12pt 0 18pt;
+  padding: 10pt 12pt;
+}
+
+.toc {
+  border: 1pt solid #d8dee9;
+  margin: 14pt 0 18pt;
+  padding: 10pt 14pt;
+}
+
+.toc ol {
+  margin: 4pt 0 0 16pt;
+  padding: 0;
+}
+
+.toc li {
+  margin: 3pt 0;
+}
+
+table {
+  border-collapse: collapse;
+  font-size: 9.2pt;
+  margin: 10pt 0 16pt;
+  page-break-inside: auto;
+  width: 100%;
+}
+
+thead {
+  display: table-header-group;
+}
+
+tfoot {
+  display: table-footer-group;
+}
+
+tr {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+th,
+td {
+  border: 0.75pt solid #cfd7e3;
+  padding: 5pt 6pt;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  background: #eaf0f8;
+  color: #111827;
+  font-weight: 700;
+}
+
+.page-break {
+  break-before: page;
+}
+
+.avoid-break {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.callout {
+  border-left: 4pt solid #2563eb;
+  margin: 12pt 0 16pt;
+  padding: 10pt 12pt;
+}
+
+.callout-blue {
+  background: #f0f6ff;
+  border-left-color: #2563eb;
+}
+
+.callout-red {
+  background: #fff1f2;
+  border-left-color: #e11d48;
+}
+
+.checklist {
+  list-style: none;
+  margin: 6pt 0 14pt;
+  padding-left: 0;
+}
+
+.checklist li {
+  margin: 5pt 0;
+  padding-left: 16pt;
+  position: relative;
+}
+
+.checklist li::before {
+  color: #2563eb;
+  content: "□";
+  left: 0;
+  position: absolute;
+}
+
+.checklist li.done::before {
+  content: "✓";
+  font-weight: 700;
+}
+
+.link-list {
+  margin: 6pt 0 14pt 16pt;
+}
+
+a {
+  color: #1d4ed8;
+  text-decoration: none;
+}

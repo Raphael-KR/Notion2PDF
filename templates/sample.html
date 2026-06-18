@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <title>WeasyPrint 한글 PDF 샘플</title>
+  </head>
+  <body>
+    <h1>월간 운영 리포트</h1>
+    <p class="document-meta">작성일: 2026년 6월 19일 · 작성자: Notion2PDF CLI</p>
+
+    <section class="summary avoid-break">
+      <h2>요약</h2>
+      <p>
+        이 문서는 정적 HTML과 CSS만으로 머리말, 꼬리말, 페이지 번호, 표 헤더 반복,
+        페이지 나눔을 제어하는 인쇄 품질 PDF 샘플입니다. 한글 폰트는 프로젝트에 포함된
+        Pretendard를 @font-face로 불러와 PDF에 임베딩합니다.
+      </p>
+    </section>
+
+    <nav class="toc avoid-break">
+      <h2>목차</h2>
+      <ol>
+        <li>문서 개요</li>
+        <li>월간 지표 표</li>
+        <li>출력 검증 항목</li>
+      </ol>
+    </nav>
+
+    <section>
+      <h2>1. 문서 개요</h2>
+      <p>
+        WeasyPrint는 브라우저처럼 JavaScript를 실행하지 않으므로, PDF로 변환할 입력은
+        완성된 정적 HTML이어야 합니다. 동적으로 계산해야 하는 차트, 날짜, 목차 데이터는
+        변환 전에 HTML에 반영하거나 정적 이미지와 SVG로 대체하는 방식을 권장합니다.
+      </p>
+      <p>
+        아래 표는 여러 페이지에 걸쳐 출력되도록 구성되어 있습니다. 페이지 경계에서 표가
+        나뉘더라도 헤더 행이 반복되어야 하며, 각 페이지 하단에는 x / y 형식의 페이지 번호가
+        표시되어야 합니다.
+      </p>
+    </section>
+
+    <section>
+      <h2>2. 월간 지표 표</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>번호</th>
+            <th>항목</th>
+            <th>상태</th>
+            <th>상세 설명</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>01</td><td>한글 렌더링</td><td>점검</td><td>본문, 머리말, 꼬리말에 포함된 한글이 네모나 깨진 글자 없이 표시되는지 확인합니다.</td></tr>
+          <tr><td>02</td><td>폰트 임베딩</td><td>점검</td><td>프로젝트의 Pretendard 웹폰트를 @font-face로 연결하고 PDF 내부에 포함되도록 합니다.</td></tr>
+          <tr><td>03</td><td>페이지 번호</td><td>점검</td><td>하단 중앙에 현재 페이지와 전체 페이지가 x / y 형식으로 출력되는지 확인합니다.</td></tr>
+          <tr><td>04</td><td>표 헤더 반복</td><td>점검</td><td>긴 표가 페이지를 넘어갈 때 thead가 각 페이지 상단에서 다시 표시되는지 확인합니다.</td></tr>
+          <tr><td>05</td><td>문단 흐름</td><td>양호</td><td>문단 간 여백과 행간이 안정적으로 유지되어 인쇄물에서 읽기 좋은 흐름을 제공합니다.</td></tr>
+          <tr><td>06</td><td>제목 처리</td><td>양호</td><td>제목 바로 뒤에 페이지가 갈라지는 것을 줄이기 위해 break-after: avoid를 적용합니다.</td></tr>
+          <tr><td>07</td><td>요약 박스</td><td>양호</td><td>중요 요약 영역은 break-inside: avoid로 한 페이지 안에 유지되도록 설계했습니다.</td></tr>
+          <tr><td>08</td><td>문서 메타</td><td>양호</td><td>작성일과 작성자 같은 보조 정보는 작은 글씨와 낮은 대비로 배치합니다.</td></tr>
+          <tr><td>09</td><td>여백</td><td>양호</td><td>A4 기준 상하좌우 여백을 인쇄와 제본에 무리가 없도록 설정합니다.</td></tr>
+          <tr><td>10</td><td>머리말</td><td>양호</td><td>@page의 top-left와 top-right margin box를 사용해 모든 페이지에 머리말을 출력합니다.</td></tr>
+          <tr><td>11</td><td>꼬리말</td><td>양호</td><td>@page의 bottom-center margin box에서 페이지 카운터를 출력합니다.</td></tr>
+          <tr><td>12</td><td>정적 입력</td><td>양호</td><td>외부 JavaScript 없이 변환 가능한 HTML을 입력으로 사용합니다.</td></tr>
+          <tr><td>13</td><td>이미지 전략</td><td>권장</td><td>동적 차트는 변환 전에 PNG 또는 SVG로 저장하여 HTML에 포함하는 방식을 사용합니다.</td></tr>
+          <tr><td>14</td><td>표 셀 여백</td><td>양호</td><td>셀 안쪽 여백을 충분히 두어 긴 한글 문장이 답답하게 보이지 않도록 합니다.</td></tr>
+          <tr><td>15</td><td>색상 대비</td><td>양호</td><td>본문과 표 헤더의 대비를 유지해 화면과 인쇄물 모두에서 읽기 쉽게 구성합니다.</td></tr>
+          <tr><td>16</td><td>줄바꿈</td><td>양호</td><td>긴 한글 문장이 셀 너비에 맞춰 자연스럽게 줄바꿈되는지 확인합니다.</td></tr>
+          <tr><td>17</td><td>CLI 입력</td><td>양호</td><td>파일 경로 입력과 inline HTML 문자열 입력을 모두 지원합니다.</td></tr>
+          <tr><td>18</td><td>출력 경로</td><td>양호</td><td>출력 디렉터리가 없으면 CLI가 자동으로 생성합니다.</td></tr>
+          <tr><td>19</td><td>설치 범위</td><td>양호</td><td>Python 패키지는 프로젝트 로컬 venv에만 설치합니다.</td></tr>
+          <tr><td>20</td><td>시스템 의존성</td><td>주의</td><td>pango, gdk-pixbuf, libffi, poppler는 Homebrew로 관리합니다.</td></tr>
+          <tr><td>21</td><td>검증 렌더링</td><td>양호</td><td>생성된 PDF를 PNG로 렌더링해 페이지별 레이아웃을 직접 확인합니다.</td></tr>
+          <tr><td>22</td><td>문서 재현성</td><td>양호</td><td>README에 설치와 실행 명령을 복붙 가능한 형태로 기록합니다.</td></tr>
+          <tr><td>23</td><td>운영 배포</td><td>권장</td><td>팀 환경에서는 venv와 requirements.txt를 기준으로 동일한 실행 환경을 맞춥니다.</td></tr>
+          <tr><td>24</td><td>문서 보관</td><td>권장</td><td>생성된 PDF는 output 디렉터리에 보관하고, 필요하면 배포 파이프라인에서 별도 업로드합니다.</td></tr>
+          <tr><td>25</td><td>확장성</td><td>권장</td><td>템플릿 엔진을 붙이더라도 최종 입력은 정적 HTML이 되도록 설계합니다.</td></tr>
+          <tr><td>26</td><td>오류 메시지</td><td>권장</td><td>폰트 경로와 시스템 라이브러리 누락 시 README의 트러블슈팅 절을 참고합니다.</td></tr>
+          <tr><td>27</td><td>표 분할</td><td>점검</td><td>표가 여러 페이지로 나뉘면서도 행이 중간에서 잘리지 않도록 break-inside 규칙을 적용합니다.</td></tr>
+          <tr><td>28</td><td>인쇄 크기</td><td>양호</td><td>@page size: A4로 출력 크기를 고정합니다.</td></tr>
+          <tr><td>29</td><td>헤더 고정</td><td>양호</td><td>thead의 display: table-header-group 선언으로 반복 헤더를 명시합니다.</td></tr>
+          <tr><td>30</td><td>마무리 확인</td><td>점검</td><td>최종 PDF에서 한글, 페이지 번호, 표 헤더, 전체 레이아웃을 다시 확인합니다.</td></tr>
+          <tr><td>31</td><td>추가 행</td><td>점검</td><td>페이지 경계를 충분히 넘기기 위해 표 행을 추가했습니다.</td></tr>
+          <tr><td>32</td><td>추가 행</td><td>점검</td><td>두 번째 페이지 이후에도 표 헤더가 반복되는지 확인하기 위한 데이터입니다.</td></tr>
+          <tr><td>33</td><td>추가 행</td><td>점검</td><td>긴 설명이 포함된 셀에서도 글자 겹침이나 잘림이 없어야 합니다.</td></tr>
+          <tr><td>34</td><td>추가 행</td><td>점검</td><td>테이블이 페이지 끝에 걸릴 때 행 단위로 자연스럽게 다음 페이지로 넘어갑니다.</td></tr>
+          <tr><td>35</td><td>추가 행</td><td>점검</td><td>헤더 반복과 페이지 번호가 동시에 정상 표시되는지 확인합니다.</td></tr>
+          <tr><td>36</td><td>추가 행</td><td>점검</td><td>마지막 페이지의 여백과 꼬리말 위치도 안정적으로 유지되어야 합니다.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="page-break">
+      <h2>3. 출력 검증 항목</h2>
+      <p>
+        최종 PDF를 열어 한글이 깨지지 않는지, 폰트가 임베딩되었는지, 하단 페이지 번호가
+        x / y 형식인지, 긴 표의 헤더 행이 페이지마다 반복되는지 확인합니다.
+      </p>
+      <p>
+        문제가 생기면 먼저 시스템 의존성(pango, gdk-pixbuf, libffi)과 폰트 파일 경로를
+        확인합니다. macOS Apple Silicon 환경에서는 Homebrew 기본 경로가 /opt/homebrew인지도
+        함께 점검하는 것이 좋습니다.
+      </p>
+    </section>
+  </body>
+</html>

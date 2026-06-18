@@ -1,0 +1,194 @@
+#!/bin/zsh
+set -u
+
+export PATH="/opt/homebrew/bin:/Users/raphael/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+export HOME="${HOME:-/Users/raphael}"
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+
+APP_EXECUTABLE="$0"
+APP_CONTENTS="$(cd "$(dirname "$APP_EXECUTABLE")/.." && pwd)"
+PROJECT_ROOT="$(cd "$APP_CONTENTS/../../.." && pwd)"
+PYTHON_BIN="$PROJECT_ROOT/.venv/bin/python"
+RUN_ID="$(/bin/date +%Y%m%d-%H%M%S)"
+LOG_FILE="$PROJECT_ROOT/tmp/macos-app-$RUN_ID.log"
+LATEST_LOG="$PROJECT_ROOT/tmp/macos-app.latest.log"
+
+mkdir -p "$PROJECT_ROOT/tmp"
+
+show_error() {
+  local message="$1"
+  /usr/bin/osascript - "$message" <<'APPLESCRIPT' >/dev/null 2>&1
+on run argv
+  display dialog (item 1 of argv) buttons {"OK"} default button "OK" with icon stop
+end run
+APPLESCRIPT
+}
+
+show_message() {
+  local message="$1"
+  /usr/bin/osascript - "$message" <<'APPLESCRIPT' >/dev/null 2>&1
+on run argv
+  display dialog (item 1 of argv) buttons {"OK"} default button "OK" with icon note
+end run
+APPLESCRIPT
+}
+
+if [[ ! -x "$PYTHON_BIN" ]]; then
+  show_error "프로젝트 venv를 찾을 수 없습니다: $PYTHON_BIN"
+  exit 1
+fi
+
+if ! command -v ntn >/dev/null 2>&1; then
+  show_error "Notion CLI(ntn)를 찾을 수 없습니다. PATH에 ntn이 있는지 확인하세요."
+  exit 1
+fi
+
+NTN_BIN="$(command -v ntn)"
+
+notion_url=""
+output_pdf=""
+html_output=""
+save_html="0"
+interactive="1"
+
+if [[ "$#" -ge 2 ]]; then
+  notion_url="$1"
+  output_pdf="$2"
+  if [[ "$#" -ge 3 ]]; then
+    html_output="$3"
+  fi
+  interactive="0"
+fi
+
+if [[ "$interactive" == "1" ]]; then
+  options="$(/usr/bin/osascript <<'APPLESCRIPT'
+use AppleScript version "2.4"
+use framework "Foundation"
+use framework "AppKit"
+use scripting additions
+
+set alert to current application's NSAlert's alloc()'s init()
+alert's setMessageText:"Notion 링크"
+alert's setInformativeText:"PDF로 변환할 Notion 링크를 붙여넣으세요."
+alert's addButtonWithTitle:"다음"
+alert's addButtonWithTitle:"취소"
+
+set accessoryView to current application's NSView's alloc()'s initWithFrame:{{0, 0}, {480, 58}}
+set textField to current application's NSTextField's alloc()'s initWithFrame:{{0, 30}, {480, 24}}
+textField's setPlaceholderString:"https://app.notion.com/p/..."
+
+set checkbox to current application's NSButton's alloc()'s initWithFrame:{{0, 0}, {480, 24}}
+checkbox's setButtonType:(current application's NSButtonTypeSwitch)
+checkbox's setTitle:"중간 HTML도 저장"
+checkbox's setState:(current application's NSControlStateValueOff)
+
+accessoryView's addSubview:textField
+accessoryView's addSubview:checkbox
+alert's setAccessoryView:accessoryView
+
+current application's NSApp's activateIgnoringOtherApps:true
+set response to alert's runModal()
+if response is not (current application's NSAlertFirstButtonReturn) then error number -128
+
+set urlText to textField's stringValue() as text
+set htmlFlag to checkbox's state() as integer
+return urlText & linefeed & htmlFlag
+APPLESCRIPT
+)"
+
+  notion_url="$(printf "%s" "$options" | /usr/bin/sed -n '1p')"
+  save_html="$(printf "%s" "$options" | /usr/bin/sed -n '2p')"
+
+  if [[ -z "$notion_url" ]]; then
+    exit 0
+  fi
+
+  page_title="$("$PYTHON_BIN" "$PROJECT_ROOT/notion_to_pdf.py" "$notion_url" --title-only --ntn-path "$NTN_BIN" 2>>"$LOG_FILE")"
+  if [[ -z "$page_title" ]]; then
+    page_title="notion-page"
+  fi
+
+  default_pdf_name="$(TITLE="$page_title" "$PYTHON_BIN" -c 'import os, re
+title = os.environ.get("TITLE", "notion-page")
+title = re.sub(r"[/:\\\\?%*|\"<>\\n\\r]+", "-", title).strip(" .-") or "notion-page"
+print(title[:120] + ".pdf")')"
+
+  output_pdf="$(/usr/bin/osascript - "$default_pdf_name" <<'APPLESCRIPT'
+on run argv
+set defaultName to item 1 of argv
+set chosenFile to choose file name with prompt "PDF 저장 위치를 선택하세요." default name defaultName
+return POSIX path of chosenFile
+end run
+APPLESCRIPT
+)"
+fi
+
+if [[ -z "$notion_url" || -z "$output_pdf" ]]; then
+  show_error "Notion 링크와 PDF 출력 경로가 필요합니다."
+  exit 1
+fi
+
+if [[ "$interactive" == "1" && "$save_html" == "1" && -z "$html_output" ]]; then
+  output_dir="$(dirname "$output_pdf")"
+  output_name="$(basename "$output_pdf")"
+  html_output="$output_dir/${output_name:r}.html"
+fi
+
+command_args=("$PROJECT_ROOT/notion_to_pdf.py" "$notion_url" "$output_pdf" "--ntn-path" "$NTN_BIN")
+if [[ -n "$html_output" ]]; then
+  command_args+=("--html-output" "$html_output")
+fi
+
+{
+  echo "Started: $(/bin/date)"
+  echo "Project: $PROJECT_ROOT"
+  echo "Output: $output_pdf"
+  echo "Save HTML: $save_html"
+  echo "HTML: ${html_output:-disabled}"
+  echo "HOME: $HOME"
+  echo "PATH: $PATH"
+  echo "Python: $PYTHON_BIN"
+  echo "ntn: $NTN_BIN"
+  "$NTN_BIN" --version
+  echo "Checking ntn auth..."
+  "$NTN_BIN" api v1/users/me >/dev/null
+  echo "Converting..."
+  "$PYTHON_BIN" "${command_args[@]}"
+} >"$LOG_FILE" 2>&1
+exit_status="$?"
+/bin/cp "$LOG_FILE" "$LATEST_LOG" 2>/dev/null || true
+
+if [[ "$exit_status" -ne 0 ]]; then
+  if [[ "$interactive" == "1" ]]; then
+    show_error "PDF 변환에 실패했습니다. 로그: $LOG_FILE"
+  else
+    cat "$LOG_FILE" >&2
+  fi
+  exit "$exit_status"
+fi
+
+if [[ "$interactive" == "1" ]]; then
+  if [[ -n "$html_output" ]]; then
+    html_message="중간 HTML:
+$html_output"
+  else
+    html_message="중간 HTML은 저장하지 않았습니다."
+  fi
+
+  button="$(/usr/bin/osascript - "$output_pdf" "$html_message" <<'APPLESCRIPT'
+on run argv
+set outputPath to item 1 of argv
+set htmlMessage to item 2 of argv
+display dialog "PDF 변환이 완료되었습니다." & return & outputPath & return & htmlMessage buttons {"OK", "Finder에서 보기", "PDF 열기"} default button "PDF 열기" with icon note
+return button returned of result
+end run
+APPLESCRIPT
+)"
+  if [[ "$button" == "PDF 열기" ]]; then
+    /usr/bin/open "$output_pdf"
+  elif [[ "$button" == "Finder에서 보기" ]]; then
+    /usr/bin/open -R "$output_pdf"
+  fi
+else
+  cat "$LOG_FILE"
+fi

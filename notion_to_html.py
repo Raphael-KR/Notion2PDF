@@ -340,7 +340,7 @@ def render_blocks(
             content = rich_text(value.get("rich_text", []))
             children = render_child_blocks(client, block, headings)
             html_blocks.append(
-                f'<section class="{block_classes(block, "callout")}" {data_attrs(block)}><p><span class="callout-icon">{html.escape(icon)}</span> {content}</p>{children}</section>'
+                f'<section class="{block_classes(block, "callout")}" {data_attrs(block)}><div class="callout-main"><span class="callout-icon">{html.escape(icon)}</span><div class="callout-content">{content}</div></div>{children}</section>'
             )
         elif block_type == "quote":
             html_blocks.append(

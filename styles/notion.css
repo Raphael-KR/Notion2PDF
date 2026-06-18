@@ -76,7 +76,7 @@ p.notion-empty {
 }
 
 .toc {
-  margin: 10pt 0 16pt;
+  margin: 10pt 0 0;
   padding: 8pt 14pt;
 }
 
@@ -249,7 +249,6 @@ th {
 }
 
 .callout {
-  border-left: 4pt solid #8aa8d8;
   border-radius: 6pt;
   margin: 14pt 0;
   padding: 12pt;
@@ -259,34 +258,22 @@ th {
   margin-bottom: 0;
 }
 
-.callout p {
-  margin-bottom: 4pt;
-}
-
-.callout.notion-color-gray_background {
-  border-left: 0;
-}
-
-.callout.notion-color-blue_background {
-  border-left-color: #2563eb;
-}
-
-.callout.notion-color-red_background {
-  border-left-color: #e11d48;
-}
-
-.callout.notion-color-green_background,
-.callout.notion-color-teal_background {
-  border-left-color: #0f766e;
-}
-
-.callout.notion-color-yellow_background {
-  border-left-color: #ca8a04;
+.callout-main {
+  display: grid;
+  gap: 8pt;
+  grid-template-columns: auto 1fr;
+  align-items: start;
 }
 
 .callout-icon {
   display: inline-block;
-  margin-right: 3pt;
+  font-size: 15pt;
+  line-height: 1.25;
+  padding-top: 1pt;
+}
+
+.callout-content {
+  min-width: 0;
 }
 
 .checklist {
@@ -315,6 +302,18 @@ th {
 
 .link-list {
   margin: 6pt 0 14pt 16pt;
+}
+
+ul:not(.toc-list):not(.checklist),
+ol:not(.toc-list) {
+  margin: 8pt 0 16pt 24pt;
+  padding-left: 0;
+}
+
+ul:not(.toc-list):not(.checklist) li,
+ol:not(.toc-list) li {
+  margin: 5pt 0;
+  padding-left: 3pt;
 }
 
 a {

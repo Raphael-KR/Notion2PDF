@@ -75,6 +75,12 @@ p.notion-empty {
   min-height: 8pt;
 }
 
+blockquote {
+  border-left: 3pt solid rgba(55, 53, 47, 0.75);
+  margin: 8pt 0 12pt;
+  padding: 0 0 0 12pt;
+}
+
 .toc {
   margin: 2pt 0 -2pt;
   padding: 4pt 14pt 0;

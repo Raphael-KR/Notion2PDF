@@ -76,7 +76,7 @@ p.notion-empty {
 }
 
 blockquote {
-  border-left: 3pt solid rgba(55, 53, 47, 0.75);
+  border-left: 2px solid rgba(55, 53, 47, 0.75);
   margin: 8pt 0 12pt;
   padding: 0 0 0 12pt;
 }
@@ -317,7 +317,7 @@ ul:not(.toc-list):not(.checklist) {
 }
 
 ul:not(.toc-list):not(.checklist) li {
-  margin: 5pt 0;
+  margin: 4pt 0;
   padding-left: 8pt;
   position: relative;
 }

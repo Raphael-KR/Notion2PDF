@@ -336,11 +336,19 @@ def render_blocks(
                 f'<ul class="checklist"><li class="{block_classes(block, checked)}" {data_attrs(block)}>{rich_text(value.get("rich_text", []))}</li></ul>'
             )
         elif block_type == "callout":
-            icon = value.get("icon", {}).get("emoji", "")
+            icon_value = value.get("icon") or {}
+            icon = icon_value.get("emoji", "")
             content = rich_text(value.get("rich_text", []))
             children = render_child_blocks(client, block, headings)
+            if icon:
+                callout_body = (
+                    f'<div class="callout-main"><span class="callout-icon">{html.escape(icon)}</span>'
+                    f'<div class="callout-content">{content}</div></div>'
+                )
+            else:
+                callout_body = f'<div class="callout-content">{content}</div>'
             html_blocks.append(
-                f'<section class="{block_classes(block, "callout")}" {data_attrs(block)}><div class="callout-main"><span class="callout-icon">{html.escape(icon)}</span><div class="callout-content">{content}</div></div>{children}</section>'
+                f'<section class="{block_classes(block, "callout")}" {data_attrs(block)}>{callout_body}{children}</section>'
             )
         elif block_type == "quote":
             html_blocks.append(

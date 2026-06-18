@@ -343,12 +343,12 @@ def render_blocks(
             if icon:
                 callout_body = (
                     f'<div class="callout-main"><span class="callout-icon">{html.escape(icon)}</span>'
-                    f'<div class="callout-content">{content}</div></div>'
+                    f'<div class="callout-content">{content}{children}</div></div>'
                 )
             else:
-                callout_body = f'<div class="callout-content">{content}</div>'
+                callout_body = f'<div class="callout-content">{content}{children}</div>'
             html_blocks.append(
-                f'<section class="{block_classes(block, "callout")}" {data_attrs(block)}>{callout_body}{children}</section>'
+                f'<section class="{block_classes(block, "callout")}" {data_attrs(block)}>{callout_body}</section>'
             )
         elif block_type == "quote":
             html_blocks.append(

@@ -226,6 +226,42 @@ def collect_headings(blocks: list[dict[str, Any]]) -> list[tuple[int, str, str]]
     return headings
 
 
+def render_toc(headings: list[tuple[int, str, str]]) -> str:
+    tree: list[dict[str, Any]] = []
+    stack: list[tuple[int, list[dict[str, Any]]]] = [(0, tree)]
+
+    for level, content, heading_id in headings:
+        if not heading_id:
+            continue
+        while len(stack) > 1 and level <= stack[-1][0]:
+            stack.pop()
+        node = {
+            "level": level,
+            "content": content,
+            "heading_id": heading_id,
+            "children": [],
+        }
+        stack[-1][1].append(node)
+        stack.append((level, node["children"]))
+
+    def render_nodes(nodes: list[dict[str, Any]], root: bool = False) -> str:
+        if not nodes:
+            return ""
+        list_class = "toc-list toc-root" if root else "toc-list"
+        items: list[str] = []
+        for node in nodes:
+            level = node["level"]
+            heading_id = html.escape(node["heading_id"], quote=True)
+            content = html.escape(node["content"])
+            children = render_nodes(node["children"])
+            items.append(
+                f'<li class="toc-level-{level}"><a href="#{heading_id}">{content}</a>{children}</li>'
+            )
+        return f'<ul class="{list_class}">' + "\n".join(items) + "</ul>"
+
+    return render_nodes(tree, root=True)
+
+
 def hydrate_children(client: Any, blocks: list[dict[str, Any]]) -> list[dict[str, Any]]:
     for block in blocks:
         if block.get("has_children") and "children" not in block:
@@ -289,14 +325,10 @@ def render_blocks(
                 f'<h{level} id="{heading_id}" class="{block_classes(block)}">{content}</h{level}>'
             )
         elif block_type == "table_of_contents":
-            items = "\n".join(
-                f'<li class="toc-level-{level}"><a href="#{html.escape(heading_id, quote=True)}">{html.escape(content)}</a></li>'
-                for level, content, heading_id in headings
-                if heading_id
-            )
-            if items:
+            toc = render_toc(headings)
+            if toc:
                 html_blocks.append(
-                    f'<nav class="{block_classes(block, "toc")}" {data_attrs(block)}><ol>{items}</ol></nav>'
+                    f'<nav class="{block_classes(block, "toc")}" {data_attrs(block)}>{toc}</nav>'
                 )
         elif block_type == "to_do":
             checked = "done" if value.get("checked") else ""

@@ -45,10 +45,8 @@ h4 {
 }
 
 h1 {
-  border-bottom: 1.2pt solid #111827;
   font-size: 24pt;
-  margin-bottom: 16pt;
-  padding-bottom: 10pt;
+  margin-bottom: 20pt;
 }
 
 h2 {
@@ -78,9 +76,8 @@ p.notion-empty {
 }
 
 .toc {
-  border: 1pt solid #d8dee9;
-  margin: 12pt 0 18pt;
-  padding: 10pt 14pt;
+  margin: 10pt 0 16pt;
+  padding: 8pt 14pt;
 }
 
 .toc-list {
@@ -95,6 +92,13 @@ p.notion-empty {
 
 .toc-list li {
   margin: 3pt 0;
+}
+
+.toc a {
+  color: rgba(125, 122, 117, 1);
+  text-decoration: underline;
+  text-decoration-thickness: 0.5pt;
+  text-underline-offset: 2pt;
 }
 
 .notion-color-gray {
@@ -249,8 +253,20 @@ th {
 .callout {
   border-left: 4pt solid #8aa8d8;
   border-radius: 6pt;
-  margin: 12pt 0 16pt;
-  padding: 10pt 12pt;
+  margin: 14pt 0;
+  padding: 12pt;
+}
+
+.callout > :last-child {
+  margin-bottom: 0;
+}
+
+.callout p {
+  margin-bottom: 4pt;
+}
+
+.callout.notion-color-gray_background {
+  border-left: 0;
 }
 
 .callout.notion-color-blue_background {

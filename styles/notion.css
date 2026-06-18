@@ -26,8 +26,8 @@
 html {
   color: #1f2937;
   font-family: "Pretendard", sans-serif;
-  font-size: 10.5pt;
-  line-height: 1.65;
+  font-size: 12pt;
+  line-height: 1.6;
 }
 
 body {
@@ -45,26 +45,26 @@ h4 {
 }
 
 h1 {
-  font-size: 24pt;
-  margin-bottom: 20pt;
+  font-size: 28pt;
+  margin-bottom: 22pt;
 }
 
 h2 {
   break-after: avoid;
-  font-size: 15pt;
-  margin-top: 20pt;
+  font-size: 18pt;
+  margin-top: 22pt;
 }
 
 h3 {
   break-after: avoid;
-  font-size: 12.5pt;
-  margin-top: 14pt;
+  font-size: 15pt;
+  margin-top: 16pt;
 }
 
 h4 {
   break-after: avoid;
-  font-size: 11.5pt;
-  margin-top: 12pt;
+  font-size: 13.5pt;
+  margin-top: 14pt;
 }
 
 p {
@@ -208,7 +208,7 @@ blockquote[class*="_background"] {
 
 table {
   border-collapse: collapse;
-  font-size: 9.2pt;
+  font-size: 10.5pt;
   margin: 10pt 0 16pt;
   page-break-inside: auto;
   width: 100%;

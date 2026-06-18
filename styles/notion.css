@@ -76,8 +76,8 @@ p.notion-empty {
 }
 
 .toc {
-  margin: 10pt 0 0;
-  padding: 8pt 14pt;
+  margin: 2pt 0 -2pt;
+  padding: 4pt 14pt 0;
 }
 
 .toc-list {
@@ -304,13 +304,27 @@ th {
   margin: 6pt 0 14pt 16pt;
 }
 
-ul:not(.toc-list):not(.checklist),
-ol:not(.toc-list) {
+ul:not(.toc-list):not(.checklist) {
   margin: 8pt 0 16pt 24pt;
+  list-style: none;
   padding-left: 0;
 }
 
-ul:not(.toc-list):not(.checklist) li,
+ul:not(.toc-list):not(.checklist) li {
+  margin: 5pt 0;
+  padding-left: 8pt;
+  position: relative;
+}
+
+ul:not(.toc-list):not(.checklist) li::before {
+  content: "•";
+  font-size: 1.35em;
+  left: -10pt;
+  line-height: 1;
+  position: absolute;
+  top: 0.08em;
+}
+
 ol:not(.toc-list) li {
   margin: 5pt 0;
   padding-left: 3pt;

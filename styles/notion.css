@@ -311,7 +311,7 @@ th {
 }
 
 ul:not(.toc-list):not(.checklist) {
-  margin: 8pt 0 16pt 24pt;
+  margin: 8pt 0 10pt 24pt;
   list-style: none;
   padding-left: 0;
 }
@@ -334,6 +334,24 @@ ul:not(.toc-list):not(.checklist) li::before {
 ol:not(.toc-list) li {
   margin: 5pt 0;
   padding-left: 3pt;
+}
+
+pre.notion-code {
+  background: rgba(247, 246, 243, 1);
+  border-radius: 6pt;
+  color: #1f2937;
+  font-family: "Andale Mono", "Menlo", "Courier New", monospace;
+  font-size: 10.5pt;
+  line-height: 1.55;
+  margin: 8pt 0 14pt;
+  padding: 18pt 20pt;
+  white-space: pre-wrap;
+}
+
+pre.notion-code code {
+  background: transparent;
+  font-family: inherit;
+  font-size: inherit;
 }
 
 a {

@@ -96,9 +96,7 @@ p.notion-empty {
 
 .toc a {
   color: rgba(125, 122, 117, 1);
-  text-decoration: underline;
-  text-decoration-thickness: 0.5pt;
-  text-underline-offset: 2pt;
+  text-decoration: none;
 }
 
 .notion-color-gray {

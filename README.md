@@ -1,6 +1,39 @@
 # Notion2PDF
 
+Convert Notion pages and static HTML/CSS to print-quality PDFs with WeasyPrint.
+
 Notion 페이지와 정적 HTML/CSS를 인쇄 품질 PDF로 변환하는 로컬 CLI/App 도구입니다. WeasyPrint를 사용해 A4 PDF를 만들고, Notion API JSON의 블록 색상, 목차, 다단, 표, 체크리스트 같은 구조를 가능한 한 HTML에 보존한 뒤 PDF로 렌더링합니다.
+
+## 주요 기능
+
+- Notion 링크 또는 페이지 ID를 PDF로 직접 변환합니다.
+- 중간 HTML을 함께 저장해 렌더링 문제를 추적할 수 있습니다.
+- Notion GUI export CSS를 레퍼런스로 삼아 콜아웃, 목차, 다단, 표, 체크리스트, 코드 블록, 링크 스타일을 보정합니다.
+- 정적 HTML 파일과 HTML 문자열도 WeasyPrint PDF로 변환합니다.
+- macOS Apple Silicon에서 Homebrew + Python venv만 사용하도록 구성했습니다.
+
+## 빠른 시작
+
+```bash
+brew install pango gdk-pixbuf libffi poppler
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+python convert.py templates/sample.html output/sample.pdf
+```
+
+Notion 링크를 바로 변환하려면 먼저 Notion CLI(`ntn`)에 로그인합니다.
+
+```bash
+ntn login
+source .venv/bin/activate
+python notion_to_pdf.py "https://app.notion.com/p/..." output/notion-page.pdf --html-output output/notion-page.html
+```
+
+## 보안 주의
+
+생성된 HTML/PDF/로그에는 Notion 페이지 본문, 개인 링크, 서명된 파일 URL이 포함될 수 있습니다. 공개 이슈나 커밋에 올리기 전에 민감 정보를 제거하세요. 자세한 내용은 `SECURITY.md`를 참고하세요.
 
 ## 설치
 

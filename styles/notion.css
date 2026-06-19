@@ -280,9 +280,8 @@ th {
 }
 
 .callout-main {
-  display: grid;
+  display: flex;
   column-gap: 0.5em;
-  grid-template-columns: 1.5em 1fr;
   align-items: start;
 }
 
@@ -290,6 +289,7 @@ th {
   align-items: center;
   display: inline-flex;
   font-size: 1.5em;
+  flex: 0 0 1em;
   height: 1em;
   justify-content: center;
   line-height: 1;
@@ -300,6 +300,7 @@ th {
 }
 
 .callout-content {
+  flex: 1 1 auto;
   min-width: 0;
 }
 

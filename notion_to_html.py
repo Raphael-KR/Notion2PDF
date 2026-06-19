@@ -148,7 +148,7 @@ def rich_text(items: list[dict[str, Any]]) -> str:
     parts: list[str] = []
     for item in items:
         text = item.get("plain_text", "")
-        escaped = html.escape(text)
+        escaped = html.escape(text).replace("\n", "<br/>")
         href = item.get("href")
         annotations = item.get("annotations", {})
 

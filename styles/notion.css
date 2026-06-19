@@ -404,7 +404,15 @@ pre.notion-code code {
   font-size: inherit;
 }
 
+hr {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+  height: 1px;
+  margin: 14pt 0;
+}
+
 a {
-  color: #1d4ed8;
-  text-decoration: none;
+  color: inherit;
+  text-decoration: underline;
 }

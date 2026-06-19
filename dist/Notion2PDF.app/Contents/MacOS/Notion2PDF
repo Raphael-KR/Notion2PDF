@@ -166,52 +166,43 @@ if [[ "$#" -ge 2 ]]; then
 fi
 
 if [[ "$interactive" == "1" ]]; then
-  options="$(/usr/bin/osascript <<'APPLESCRIPT' 2>>"$LOG_FILE"
-use AppleScript version "2.4"
-use framework "Foundation"
-use framework "AppKit"
-use scripting additions
+  notion_url="$(/usr/bin/osascript <<'APPLESCRIPT' 2>>"$LOG_FILE"
+tell application "System Events"
+  activate
+end tell
 
-set alert to current application's NSAlert's alloc()'s init()
-alert's setMessageText:"Notion 링크"
-alert's setInformativeText:"PDF로 변환할 Notion 링크를 붙여넣으세요."
-alert's addButtonWithTitle:"다음"
-alert's addButtonWithTitle:"취소"
-
-set accessoryView to current application's NSView's alloc()'s initWithFrame:{{0, 0}, {480, 58}}
-set textField to current application's NSTextField's alloc()'s initWithFrame:{{0, 30}, {480, 24}}
-textField's setPlaceholderString:"https://app.notion.com/p/..."
-
-set checkbox to current application's NSButton's alloc()'s initWithFrame:{{0, 0}, {480, 24}}
-checkbox's setButtonType:(current application's NSButtonTypeSwitch)
-checkbox's setTitle:"중간 HTML도 저장"
-checkbox's setState:(current application's NSControlStateValueOff)
-
-accessoryView's addSubview:textField
-accessoryView's addSubview:checkbox
-alert's setAccessoryView:accessoryView
-
-current application's NSApp's activateIgnoringOtherApps:true
-set response to alert's runModal()
-if response is not (current application's NSAlertFirstButtonReturn) then error number -128
-
-set urlText to textField's stringValue() as text
-set htmlFlag to checkbox's state() as integer
-return urlText & linefeed & htmlFlag
+set dialogResult to display dialog "PDF로 변환할 Notion 링크를 붙여넣으세요." default answer "" buttons {"취소", "다음"} default button "다음" cancel button "취소" with title "Notion 링크" with icon note
+return text returned of dialogResult
 APPLESCRIPT
 )"
-  options_status="$?"
+  input_status="$?"
   copy_latest_log
-  if [[ "$options_status" -ne 0 ]]; then
-    log_line "Input dialog cancelled or failed with status $options_status"
+  if [[ "$input_status" -ne 0 ]]; then
+    log_line "Input dialog cancelled or failed with status $input_status"
     exit 0
   fi
 
-  notion_url="$(printf "%s" "$options" | /usr/bin/sed -n '1p')"
-  save_html="$(printf "%s" "$options" | /usr/bin/sed -n '2p')"
-
   if [[ -z "$notion_url" ]]; then
     exit 0
+  fi
+
+  save_html_choice="$(/usr/bin/osascript <<'APPLESCRIPT' 2>>"$LOG_FILE"
+tell application "System Events"
+  activate
+end tell
+
+set dialogResult to display dialog "중간 HTML도 함께 저장할까요?" buttons {"저장 안 함", "HTML 저장"} default button "저장 안 함" cancel button "저장 안 함" with title "중간 HTML 저장" with icon note
+return button returned of dialogResult
+APPLESCRIPT
+)"
+  html_choice_status="$?"
+  copy_latest_log
+  if [[ "$html_choice_status" -ne 0 ]]; then
+    save_html="0"
+  elif [[ "$save_html_choice" == "HTML 저장" ]]; then
+    save_html="1"
+  else
+    save_html="0"
   fi
 
   log_line "Fetching page title..."

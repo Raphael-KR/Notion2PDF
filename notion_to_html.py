@@ -340,6 +340,7 @@ def render_blocks(
             icon = icon_value.get("emoji", "")
             content = rich_text(value.get("rich_text", []))
             children = render_child_blocks(client, block, headings)
+            layout_class = "callout-with-toc" if " toc" in children else ""
             if icon:
                 callout_body = (
                     f'<div class="callout-main"><span class="callout-icon">{html.escape(icon)}</span>'
@@ -348,7 +349,7 @@ def render_blocks(
             else:
                 callout_body = f'<div class="callout-content">{content}{children}</div>'
             html_blocks.append(
-                f'<section class="{block_classes(block, "callout")}" {data_attrs(block)}>{callout_body}</section>'
+                f'<section class="{block_classes(block, "callout", layout_class)}" {data_attrs(block)}>{callout_body}</section>'
             )
         elif block_type == "quote":
             html_blocks.append(

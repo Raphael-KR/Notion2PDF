@@ -304,6 +304,16 @@ th {
   min-width: 0;
 }
 
+.callout-with-toc .callout-main {
+  display: grid;
+  grid-template-columns: 1.5em 1fr;
+}
+
+.callout-with-toc .callout-icon,
+.callout-with-toc .callout-content {
+  flex: initial;
+}
+
 .callout-content > .children > ul:first-child {
   margin-top: 0;
 }

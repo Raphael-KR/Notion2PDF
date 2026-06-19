@@ -94,9 +94,17 @@ open dist/Notion2PDF.app
 ```
 
 앱을 더블클릭하면 Notion 링크와 PDF 저장 위치를 묻습니다. 내부적으로는 `ntn` 인증과 `notion_to_pdf.py`를 사용합니다.
-첫 화면에서 중간 HTML 저장 여부를 선택할 수 있습니다. 저장을 켜면 PDF와 같은 폴더에 같은 파일명 `.html`로 함께 저장됩니다.
-PDF 저장 대화상자의 기본 파일명은 Notion 페이지 제목을 자동으로 사용합니다.
-실패하면 `tmp/macos-app-YYYYMMDD-HHMMSS.log`와 `tmp/macos-app.latest.log`를 확인하세요.
+
+앱 워크플로우:
+
+1. Notion 링크를 입력합니다. 기본 macOS 입력창을 사용하므로 `⌘V` 붙여넣기가 동작합니다.
+2. 중간 HTML 저장 여부를 선택합니다.
+3. Notion 페이지 제목을 읽어 PDF 저장 대화상자의 기본 파일명으로 사용합니다.
+4. 변환이 시작되면 macOS 알림을 표시합니다.
+5. 성공하면 PDF 저장 위치, HTML 저장 위치, 로그 위치를 보여주고 `PDF 열기`, `Finder에서 보기`, `HTML 열기`를 제공합니다.
+6. 실패하면 실패 사유와 저장 시도 위치, 로그 위치를 보여주고 `로그 열기`, `저장 폴더 보기`를 제공합니다.
+
+HTML 저장을 켜면 PDF와 같은 폴더에 같은 파일명 `.html`로 함께 저장됩니다. 최신 로그는 항상 `tmp/macos-app.latest.log`에 복사되고, 실행별 로그는 `tmp/macos-app-YYYYMMDD-HHMMSS.log`에 저장됩니다.
 
 CI처럼 `ntn` keychain 로그인 대신 API 토큰을 직접 써야 하는 환경에서는 `--client api`를 사용할 수 있습니다.
 

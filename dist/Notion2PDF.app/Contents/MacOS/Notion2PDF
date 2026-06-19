@@ -42,15 +42,6 @@ $LOG_FILE
 EOF
 }
 
-show_error() {
-  local message="$1"
-  /usr/bin/osascript - "$message" <<'APPLESCRIPT' >/dev/null 2>&1
-on run argv
-  display dialog (item 1 of argv) buttons {"OK"} default button "OK" with icon stop
-end run
-APPLESCRIPT
-}
-
 notify_user() {
   local title="$1"
   local message="$2"

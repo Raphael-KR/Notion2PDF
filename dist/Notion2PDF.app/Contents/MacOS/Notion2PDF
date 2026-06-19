@@ -63,52 +63,64 @@ APPLESCRIPT
 
 show_failure_result() {
   local message="$1"
-  /usr/bin/osascript - "$message" "$LOG_FILE" "$output_pdf" <<'APPLESCRIPT'
+  notify_user "Notion2PDF" "PDF 변환에 실패했습니다."
+  /usr/bin/osascript - "$message" "$LOG_FILE" "$output_pdf" <<'APPLESCRIPT' >>"$LOG_FILE" 2>&1
 on run argv
 set messageText to item 1 of argv
 set logPath to item 2 of argv
 set outputPath to item 3 of argv
-display dialog messageText buttons {"닫기", "저장 폴더 보기", "로그 열기"} default button "로그 열기" with icon stop
-set chosenButton to button returned of result
-if chosenButton is "로그 열기" then
-  do shell script "/usr/bin/open " & quoted form of logPath
-else if chosenButton is "저장 폴더 보기" and outputPath is not "" then
-  do shell script "/usr/bin/open -R " & quoted form of outputPath
-end if
+tell application "System Events"
+  activate
+  display dialog messageText buttons {"닫기", "저장 폴더 보기", "로그 열기"} default button "로그 열기" with icon stop
+  set chosenButton to button returned of result
+end tell
+if chosenButton is "로그 열기" then do shell script "/usr/bin/open " & quoted form of logPath
+if chosenButton is "저장 폴더 보기" and outputPath is not "" then do shell script "/usr/bin/open -R " & quoted form of outputPath
 APPLESCRIPT
+  dialog_status="$?"
+  copy_latest_log
+  if [[ "$dialog_status" -ne 0 ]]; then
+    log_line "Failure dialog failed with status $dialog_status"
+  fi
 }
 
 show_success_result() {
   local message="$1"
+  notify_user "Notion2PDF" "PDF 변환이 완료되었습니다."
   if [[ -n "$html_output" ]]; then
-    /usr/bin/osascript - "$output_pdf" "$html_output" "$message" <<'APPLESCRIPT'
+    /usr/bin/osascript - "$output_pdf" "$html_output" "$message" <<'APPLESCRIPT' >>"$LOG_FILE" 2>&1
 on run argv
 set outputPath to item 1 of argv
 set htmlPath to item 2 of argv
 set messageText to item 3 of argv
-display dialog messageText buttons {"HTML 열기", "Finder에서 보기", "PDF 열기"} default button "PDF 열기" with icon note
-set chosenButton to button returned of result
-if chosenButton is "PDF 열기" then
-  do shell script "/usr/bin/open " & quoted form of outputPath
-else if chosenButton is "Finder에서 보기" then
-  do shell script "/usr/bin/open -R " & quoted form of outputPath
-else if chosenButton is "HTML 열기" then
-  do shell script "/usr/bin/open " & quoted form of htmlPath
-end if
+tell application "System Events"
+  activate
+  display dialog messageText buttons {"HTML 열기", "Finder에서 보기", "PDF 열기"} default button "PDF 열기" with icon note
+  set chosenButton to button returned of result
+end tell
+if chosenButton is "PDF 열기" then do shell script "/usr/bin/open " & quoted form of outputPath
+if chosenButton is "Finder에서 보기" then do shell script "/usr/bin/open -R " & quoted form of outputPath
+if chosenButton is "HTML 열기" then do shell script "/usr/bin/open " & quoted form of htmlPath
 APPLESCRIPT
+    dialog_status="$?"
   else
-    /usr/bin/osascript - "$output_pdf" "$message" <<'APPLESCRIPT'
+    /usr/bin/osascript - "$output_pdf" "$message" <<'APPLESCRIPT' >>"$LOG_FILE" 2>&1
 on run argv
 set outputPath to item 1 of argv
 set messageText to item 2 of argv
-display dialog messageText buttons {"닫기", "Finder에서 보기", "PDF 열기"} default button "PDF 열기" with icon note
-set chosenButton to button returned of result
-if chosenButton is "PDF 열기" then
-  do shell script "/usr/bin/open " & quoted form of outputPath
-else if chosenButton is "Finder에서 보기" then
-  do shell script "/usr/bin/open -R " & quoted form of outputPath
-end if
+tell application "System Events"
+  activate
+  display dialog messageText buttons {"닫기", "Finder에서 보기", "PDF 열기"} default button "PDF 열기" with icon note
+  set chosenButton to button returned of result
+end tell
+if chosenButton is "PDF 열기" then do shell script "/usr/bin/open " & quoted form of outputPath
+if chosenButton is "Finder에서 보기" then do shell script "/usr/bin/open -R " & quoted form of outputPath
 APPLESCRIPT
+    dialog_status="$?"
+  fi
+  copy_latest_log
+  if [[ "$dialog_status" -ne 0 ]]; then
+    log_line "Success dialog failed with status $dialog_status"
   fi
 }
 

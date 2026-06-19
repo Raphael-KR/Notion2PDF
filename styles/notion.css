@@ -400,8 +400,19 @@ pre.notion-code {
 
 pre.notion-code code {
   background: transparent;
+  color: inherit;
   font-family: inherit;
   font-size: inherit;
+  padding: 0;
+}
+
+code {
+  background: rgba(135, 131, 120, 0.15);
+  border-radius: 3pt;
+  color: #eb5757;
+  font-size: 85%;
+  padding: 0.2em 0.4em;
+  tab-size: 2;
 }
 
 hr {
@@ -415,4 +426,204 @@ hr {
 a {
   color: rgba(125, 122, 117, 1);
   text-decoration: underline;
+}
+
+img {
+  max-width: 100%;
+}
+
+figure {
+  margin: 1.25em 0;
+  page-break-inside: avoid;
+}
+
+figcaption {
+  font-size: 85%;
+  margin-top: 0.5em;
+  opacity: 0.5;
+}
+
+.image {
+  border: none;
+  border-radius: 0;
+  margin: 1.5em 0;
+  padding: 0;
+  text-align: center;
+}
+
+.bookmark {
+  align-items: stretch;
+  border: 1px solid rgba(55, 53, 47, 0.16);
+  border-radius: 3pt;
+  color: inherit;
+  display: flex;
+  margin: 6pt 0;
+  max-height: 8em;
+  padding: 0;
+  text-decoration: none;
+  width: 100%;
+}
+
+.bookmark * {
+  text-decoration: none;
+}
+
+.bookmark-info {
+  display: flex;
+  flex: 4 1 180px;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 12px 14px 14px;
+}
+
+.bookmark-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.bookmark-title {
+  font-size: 0.85em;
+  height: 1.75em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bookmark-description {
+  color: rgba(55, 53, 47, 0.6);
+  font-size: 0.75em;
+  max-height: 4.5em;
+  overflow: hidden;
+  word-break: break-word;
+}
+
+.bookmark-href {
+  color: rgba(125, 122, 117, 1);
+  font-size: 0.75em;
+  margin-top: 0.25em;
+}
+
+.bookmark-image {
+  border-radius: 1px;
+  display: block;
+  flex: 1 1 180px;
+  object-fit: cover;
+  position: relative;
+  width: 33%;
+}
+
+ul.toggle {
+  list-style-type: none;
+  padding-inline-start: 0;
+}
+
+ul.toggle > li {
+  list-style: none;
+  margin: 5pt 0;
+}
+
+.toggle > li > details {
+  padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+  margin-left: -1.1em;
+}
+
+.selected-value {
+  background: rgba(206, 205, 202, 0.5);
+  border-radius: 3px;
+  display: inline-block;
+  margin-bottom: 0.3em;
+  margin-right: 0.5em;
+  margin-top: 0.3em;
+  padding: 0 0.5em;
+  white-space: nowrap;
+}
+
+.select-value-color-default {
+  background-color: rgba(42, 28, 0, 0.07);
+}
+
+.select-value-color-gray {
+  background-color: rgba(28, 19, 1, 0.11);
+}
+
+.select-value-color-brown {
+  background-color: rgba(127, 51, 0, 0.156);
+}
+
+.select-value-color-orange {
+  background-color: rgba(196, 88, 0, 0.203);
+}
+
+.select-value-color-yellow {
+  background-color: rgba(209, 156, 0, 0.282);
+}
+
+.select-value-color-green {
+  background-color: rgba(0, 96, 38, 0.156);
+}
+
+.select-value-color-blue {
+  background-color: rgba(0, 118, 217, 0.203);
+}
+
+.select-value-color-purple {
+  background-color: rgba(92, 0, 163, 0.141);
+}
+
+.select-value-color-pink {
+  background-color: rgba(183, 0, 78, 0.152);
+}
+
+.select-value-color-red {
+  background-color: rgba(206, 24, 0, 0.164);
+}
+
+.link-to-page {
+  border: none;
+  font-weight: 500;
+  margin: 1em 0;
+  padding: 0;
+}
+
+.page-description {
+  margin-bottom: 2em;
+}
+
+.page-cover-image {
+  display: block;
+  max-height: 30vh;
+  object-fit: cover;
+  width: 100%;
+}
+
+.page-header-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.page-header-icon img {
+  border-radius: 3px;
+}
+
+p > .user {
+  opacity: 0.5;
+}
+
+.user-icon,
+.user-icon-inner,
+.text-icon {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+td > .user,
+td > time {
+  white-space: nowrap;
+}
+
+time {
+  opacity: 0.5;
 }

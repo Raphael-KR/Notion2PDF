@@ -208,6 +208,24 @@ def plain_rich_text(value: dict[str, Any]) -> str:
     return "".join(part.get("plain_text", "") for part in value.get("rich_text", []) or [])
 
 
+def plain_text_items(items: list[dict[str, Any]]) -> str:
+    return "".join(part.get("plain_text", "") for part in items or [])
+
+
+def asset_url(value: dict[str, Any]) -> str:
+    asset_type = value.get("type")
+    if asset_type == "external":
+        return value.get("external", {}).get("url", "")
+    if asset_type == "file":
+        return value.get("file", {}).get("url", "")
+    return ""
+
+
+def display_url(url: str) -> str:
+    label = re.sub(r"^https?://", "", url).rstrip("/")
+    return label or url
+
+
 def collect_headings(blocks: list[dict[str, Any]]) -> list[tuple[int, str, str]]:
     headings: list[tuple[int, str, str]] = []
     heading_levels = {
@@ -363,10 +381,37 @@ def render_blocks(
             )
         elif block_type == "divider":
             html_blocks.append(f'<hr class="{block_classes(block)}" {data_attrs(block)}>')
+        elif block_type == "image":
+            url = asset_url(value)
+            if url:
+                caption = rich_text(value.get("caption", []))
+                caption_html = f"<figcaption>{caption}</figcaption>" if caption else ""
+                alt = html.escape(plain_text_items(value.get("caption", [])), quote=True)
+                html_blocks.append(
+                    f'<figure class="{block_classes(block, "image")}" {data_attrs(block)}>'
+                    f'<img src="{html.escape(url, quote=True)}" alt="{alt}">{caption_html}</figure>'
+                )
+        elif block_type == "bookmark":
+            url = value.get("url", "")
+            caption = rich_text(value.get("caption", []))
+            title = caption or html.escape(display_url(url))
+            html_blocks.append(
+                f'<a class="{block_classes(block, "bookmark")}" href="{html.escape(url, quote=True)}" {data_attrs(block)}>'
+                '<div class="bookmark-info"><div class="bookmark-text">'
+                f'<div class="bookmark-title">{title}</div></div>'
+                f'<div class="bookmark-href">{html.escape(display_url(url))}</div></div></a>'
+            )
+        elif block_type == "toggle":
+            content = rich_text(value.get("rich_text", []))
+            children = render_child_blocks(client, block, headings)
+            html_blocks.append(
+                f'<ul class="toggle"><li class="{block_classes(block)}" {data_attrs(block)}>'
+                f"<details open><summary>{content}</summary>{children}</details></li></ul>"
+            )
         elif block_type == "child_page":
             title = html.escape(value.get("title", "Untitled"))
             html_blocks.append(
-                f'<p class="{block_classes(block, "child-page")}" {data_attrs(block)}>↳ {title}</p>'
+                f'<p class="{block_classes(block, "child-page", "link-to-page")}" {data_attrs(block)}>↳ {title}</p>'
             )
         elif block_type == "table":
             html_blocks.append(render_table(client, block))

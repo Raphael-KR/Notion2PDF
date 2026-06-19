@@ -313,12 +313,12 @@ th {
 
 .checklist {
   list-style: none;
-  margin: 6pt 0 13pt;
+  margin: 1pt 0;
   padding-left: 0;
 }
 
 .checklist li {
-  margin: 4pt 0;
+  margin: 3pt 0;
   padding-left: 19pt;
   position: relative;
 }

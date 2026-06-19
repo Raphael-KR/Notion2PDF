@@ -266,20 +266,34 @@ th {
 
 .callout-main {
   display: grid;
-  gap: 8pt;
-  grid-template-columns: auto 1fr;
+  column-gap: 0.5em;
+  grid-template-columns: 1.5em 1fr;
   align-items: start;
 }
 
 .callout-icon {
-  display: inline-block;
-  font-size: 15pt;
-  line-height: 1.25;
-  padding-top: 1pt;
+  align-items: center;
+  display: inline-flex;
+  font-size: 1.5em;
+  height: 1em;
+  justify-content: center;
+  line-height: 1;
+  margin-top: 0.1em;
+  max-height: 1.2em;
+  max-width: 1.2em;
+  width: 1em;
 }
 
 .callout-content {
   min-width: 0;
+}
+
+.callout-content > .children > ul:first-child {
+  margin-top: 0;
+}
+
+.callout-content > .children > :last-child {
+  margin-bottom: 0;
 }
 
 .checklist {

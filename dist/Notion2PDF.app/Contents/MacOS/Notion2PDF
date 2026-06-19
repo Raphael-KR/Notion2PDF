@@ -51,13 +51,65 @@ end run
 APPLESCRIPT
 }
 
-show_message() {
-  local message="$1"
-  /usr/bin/osascript - "$message" <<'APPLESCRIPT' >/dev/null 2>&1
+notify_user() {
+  local title="$1"
+  local message="$2"
+  /usr/bin/osascript - "$title" "$message" <<'APPLESCRIPT' >/dev/null 2>&1
 on run argv
-  display dialog (item 1 of argv) buttons {"OK"} default button "OK" with icon note
+  display notification (item 2 of argv) with title (item 1 of argv)
 end run
 APPLESCRIPT
+}
+
+show_failure_result() {
+  local message="$1"
+  /usr/bin/osascript - "$message" "$LOG_FILE" "$output_pdf" <<'APPLESCRIPT'
+on run argv
+set messageText to item 1 of argv
+set logPath to item 2 of argv
+set outputPath to item 3 of argv
+display dialog messageText buttons {"닫기", "저장 폴더 보기", "로그 열기"} default button "로그 열기" with icon stop
+set chosenButton to button returned of result
+if chosenButton is "로그 열기" then
+  do shell script "/usr/bin/open " & quoted form of logPath
+else if chosenButton is "저장 폴더 보기" and outputPath is not "" then
+  do shell script "/usr/bin/open -R " & quoted form of outputPath
+end if
+APPLESCRIPT
+}
+
+show_success_result() {
+  local message="$1"
+  if [[ -n "$html_output" ]]; then
+    /usr/bin/osascript - "$output_pdf" "$html_output" "$message" <<'APPLESCRIPT'
+on run argv
+set outputPath to item 1 of argv
+set htmlPath to item 2 of argv
+set messageText to item 3 of argv
+display dialog messageText buttons {"HTML 열기", "Finder에서 보기", "PDF 열기"} default button "PDF 열기" with icon note
+set chosenButton to button returned of result
+if chosenButton is "PDF 열기" then
+  do shell script "/usr/bin/open " & quoted form of outputPath
+else if chosenButton is "Finder에서 보기" then
+  do shell script "/usr/bin/open -R " & quoted form of outputPath
+else if chosenButton is "HTML 열기" then
+  do shell script "/usr/bin/open " & quoted form of htmlPath
+end if
+APPLESCRIPT
+  else
+    /usr/bin/osascript - "$output_pdf" "$message" <<'APPLESCRIPT'
+on run argv
+set outputPath to item 1 of argv
+set messageText to item 2 of argv
+display dialog messageText buttons {"닫기", "Finder에서 보기", "PDF 열기"} default button "PDF 열기" with icon note
+set chosenButton to button returned of result
+if chosenButton is "PDF 열기" then
+  do shell script "/usr/bin/open " & quoted form of outputPath
+else if chosenButton is "Finder에서 보기" then
+  do shell script "/usr/bin/open -R " & quoted form of outputPath
+end if
+APPLESCRIPT
+  fi
 }
 
 {
@@ -71,13 +123,13 @@ copy_latest_log
 
 if [[ ! -x "$PYTHON_BIN" ]]; then
   log_line "ERROR: missing project venv: $PYTHON_BIN"
-  show_error "$(result_message "실패: 프로젝트 venv를 찾을 수 없습니다.")"
+  show_failure_result "$(result_message "실패: 프로젝트 venv를 찾을 수 없습니다.")"
   exit 1
 fi
 
 if ! command -v ntn >/dev/null 2>&1; then
   log_line "ERROR: ntn not found on PATH"
-  show_error "$(result_message "실패: Notion CLI(ntn)를 찾을 수 없습니다.")"
+  show_failure_result "$(result_message "실패: Notion CLI(ntn)를 찾을 수 없습니다.")"
   exit 1
 fi
 
@@ -167,7 +219,7 @@ APPLESCRIPT
   title_status="$?"
   copy_latest_log
   if [[ "$title_status" -ne 0 ]]; then
-    show_error "$(result_message "실패: Notion 페이지 제목을 가져오지 못했습니다.")"
+    show_failure_result "$(result_message "실패: Notion 페이지 제목을 가져오지 못했습니다.")"
     exit "$title_status"
   fi
   if [[ -z "$page_title" ]]; then
@@ -197,7 +249,7 @@ fi
 
 if [[ -z "$notion_url" || -z "$output_pdf" ]]; then
   log_line "ERROR: missing notion URL or output PDF"
-  show_error "$(result_message "실패: Notion 링크와 PDF 출력 경로가 필요합니다.")"
+  show_failure_result "$(result_message "실패: Notion 링크와 PDF 출력 경로가 필요합니다.")"
   exit 1
 fi
 
@@ -210,6 +262,10 @@ fi
 command_args=("$PROJECT_ROOT/notion_to_pdf.py" "$notion_url" "$output_pdf" "--ntn-path" "$NTN_BIN")
 if [[ -n "$html_output" ]]; then
   command_args+=("--html-output" "$html_output")
+fi
+
+if [[ "$interactive" == "1" ]]; then
+  notify_user "Notion2PDF" "PDF 변환을 시작했습니다."
 fi
 
 {
@@ -227,7 +283,7 @@ copy_latest_log
 
 if [[ "$exit_status" -ne 0 ]]; then
   if [[ "$interactive" == "1" ]]; then
-    show_error "$(result_message "실패: PDF 변환에 실패했습니다.")"
+    show_failure_result "$(result_message "실패: PDF 변환에 실패했습니다.")"
   else
     cat "$LOG_FILE" >&2
   fi
@@ -236,20 +292,7 @@ fi
 
 if [[ "$interactive" == "1" ]]; then
   success_message="$(result_message "성공: PDF 변환이 완료되었습니다.")"
-  button="$(/usr/bin/osascript - "$output_pdf" "$success_message" <<'APPLESCRIPT'
-on run argv
-set outputPath to item 1 of argv
-set messageText to item 2 of argv
-display dialog messageText buttons {"OK", "Finder에서 보기", "PDF 열기"} default button "PDF 열기" with icon note
-return button returned of result
-end run
-APPLESCRIPT
-)"
-  if [[ "$button" == "PDF 열기" ]]; then
-    /usr/bin/open "$output_pdf"
-  elif [[ "$button" == "Finder에서 보기" ]]; then
-    /usr/bin/open -R "$output_pdf"
-  fi
+  show_success_result "$success_message"
 else
   cat "$LOG_FILE"
 fi

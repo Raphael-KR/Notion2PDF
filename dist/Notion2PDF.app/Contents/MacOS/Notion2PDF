@@ -1,5 +1,5 @@
 #!/bin/zsh
-set -u
+set -uo pipefail
 
 export PATH="/opt/homebrew/bin:/Users/raphael/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 export HOME="${HOME:-/Users/raphael}"
@@ -14,6 +14,15 @@ LOG_FILE="$PROJECT_ROOT/tmp/macos-app-$RUN_ID.log"
 LATEST_LOG="$PROJECT_ROOT/tmp/macos-app.latest.log"
 
 mkdir -p "$PROJECT_ROOT/tmp"
+
+copy_latest_log() {
+  /bin/cp "$LOG_FILE" "$LATEST_LOG" 2>/dev/null || true
+}
+
+log_line() {
+  echo "$1" >>"$LOG_FILE"
+  copy_latest_log
+}
 
 show_error() {
   local message="$1"
@@ -33,17 +42,43 @@ end run
 APPLESCRIPT
 }
 
+{
+  echo "Started: $(/bin/date)"
+  echo "Project: $PROJECT_ROOT"
+  echo "HOME: $HOME"
+  echo "PATH: $PATH"
+  echo "Python: $PYTHON_BIN"
+} >"$LOG_FILE"
+copy_latest_log
+
 if [[ ! -x "$PYTHON_BIN" ]]; then
+  log_line "ERROR: missing project venv: $PYTHON_BIN"
   show_error "프로젝트 venv를 찾을 수 없습니다: $PYTHON_BIN"
   exit 1
 fi
 
 if ! command -v ntn >/dev/null 2>&1; then
+  log_line "ERROR: ntn not found on PATH"
   show_error "Notion CLI(ntn)를 찾을 수 없습니다. PATH에 ntn이 있는지 확인하세요."
   exit 1
 fi
 
 NTN_BIN="$(command -v ntn)"
+log_line "ntn: $NTN_BIN"
+
+if [[ "${1:-}" == "--self-test" ]]; then
+  {
+    "$PYTHON_BIN" --version
+    "$NTN_BIN" --version
+    plutil -lint "$APP_CONTENTS/Info.plist"
+    "$NTN_BIN" api v1/users/me >/dev/null
+    echo "Self-test OK"
+  } >>"$LOG_FILE" 2>&1
+  exit_status="$?"
+  copy_latest_log
+  cat "$LOG_FILE"
+  exit "$exit_status"
+fi
 
 notion_url=""
 output_pdf=""
@@ -61,7 +96,7 @@ if [[ "$#" -ge 2 ]]; then
 fi
 
 if [[ "$interactive" == "1" ]]; then
-  options="$(/usr/bin/osascript <<'APPLESCRIPT'
+  options="$(/usr/bin/osascript <<'APPLESCRIPT' 2>>"$LOG_FILE"
 use AppleScript version "2.4"
 use framework "Foundation"
 use framework "AppKit"
@@ -95,6 +130,12 @@ set htmlFlag to checkbox's state() as integer
 return urlText & linefeed & htmlFlag
 APPLESCRIPT
 )"
+  options_status="$?"
+  copy_latest_log
+  if [[ "$options_status" -ne 0 ]]; then
+    log_line "Input dialog cancelled or failed with status $options_status"
+    exit 0
+  fi
 
   notion_url="$(printf "%s" "$options" | /usr/bin/sed -n '1p')"
   save_html="$(printf "%s" "$options" | /usr/bin/sed -n '2p')"
@@ -103,7 +144,14 @@ APPLESCRIPT
     exit 0
   fi
 
+  log_line "Fetching page title..."
   page_title="$("$PYTHON_BIN" "$PROJECT_ROOT/notion_to_pdf.py" "$notion_url" --title-only --ntn-path "$NTN_BIN" 2>>"$LOG_FILE")"
+  title_status="$?"
+  copy_latest_log
+  if [[ "$title_status" -ne 0 ]]; then
+    show_error "Notion 페이지 제목을 가져오지 못했습니다. 로그: $LOG_FILE"
+    exit "$title_status"
+  fi
   if [[ -z "$page_title" ]]; then
     page_title="notion-page"
   fi
@@ -121,9 +169,16 @@ return POSIX path of chosenFile
 end run
 APPLESCRIPT
 )"
+  output_status="$?"
+  copy_latest_log
+  if [[ "$output_status" -ne 0 ]]; then
+    log_line "Save dialog cancelled or failed with status $output_status"
+    exit 0
+  fi
 fi
 
 if [[ -z "$notion_url" || -z "$output_pdf" ]]; then
+  log_line "ERROR: missing notion URL or output PDF"
   show_error "Notion 링크와 PDF 출력 경로가 필요합니다."
   exit 1
 fi
@@ -140,23 +195,17 @@ if [[ -n "$html_output" ]]; then
 fi
 
 {
-  echo "Started: $(/bin/date)"
-  echo "Project: $PROJECT_ROOT"
   echo "Output: $output_pdf"
   echo "Save HTML: $save_html"
   echo "HTML: ${html_output:-disabled}"
-  echo "HOME: $HOME"
-  echo "PATH: $PATH"
-  echo "Python: $PYTHON_BIN"
-  echo "ntn: $NTN_BIN"
   "$NTN_BIN" --version
   echo "Checking ntn auth..."
   "$NTN_BIN" api v1/users/me >/dev/null
   echo "Converting..."
   "$PYTHON_BIN" "${command_args[@]}"
-} >"$LOG_FILE" 2>&1
+} >>"$LOG_FILE" 2>&1
 exit_status="$?"
-/bin/cp "$LOG_FILE" "$LATEST_LOG" 2>/dev/null || true
+copy_latest_log
 
 if [[ "$exit_status" -ne 0 ]]; then
   if [[ "$interactive" == "1" ]]; then

@@ -14,6 +14,14 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Pretendard";
+  src: url("../fonts/Pretendard-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
 @page {
   size: A4;
   margin: 18mm;
@@ -39,36 +47,43 @@ h2,
 h3,
 h4 {
   color: #111827;
-  font-weight: 700;
   line-height: 1.25;
   margin: 0 0 8pt;
 }
 
 h1 {
   font-size: 28pt;
+  font-weight: 700;
   margin-bottom: 22pt;
 }
 
 h2 {
   break-after: avoid;
   font-size: 18pt;
+  font-weight: 600;
   margin-top: 22pt;
 }
 
 h3 {
   break-after: avoid;
   font-size: 15pt;
+  font-weight: 600;
   margin-top: 16pt;
 }
 
 h4 {
   break-after: avoid;
   font-size: 13.5pt;
+  font-weight: 600;
   margin-top: 14pt;
 }
 
 p {
   margin: 0 0 9pt;
+}
+
+strong {
+  font-weight: 600;
 }
 
 p.notion-empty {
@@ -242,7 +257,7 @@ td {
 th {
   background: #eaf0f8;
   color: #111827;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .page-break {
@@ -298,26 +313,36 @@ th {
 
 .checklist {
   list-style: none;
-  margin: 6pt 0 14pt;
+  margin: 6pt 0 13pt;
   padding-left: 0;
 }
 
 .checklist li {
-  margin: 5pt 0;
-  padding-left: 16pt;
+  margin: 4pt 0;
+  padding-left: 19pt;
   position: relative;
 }
 
 .checklist li::before {
-  color: #2563eb;
-  content: "□";
+  background: #fff;
+  border: 1.1pt solid rgba(55, 53, 47, 0.9);
+  content: "";
+  height: 10pt;
   left: 0;
   position: absolute;
+  top: 0.24em;
+  width: 10pt;
 }
 
 .checklist li.done::before {
+  background: #58a9d7;
+  border-color: #58a9d7;
+  color: #fff;
   content: "✓";
+  font-size: 8pt;
   font-weight: 700;
+  line-height: 10pt;
+  text-align: center;
 }
 
 .link-list {

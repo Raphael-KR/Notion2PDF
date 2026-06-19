@@ -24,6 +24,24 @@ log_line() {
   copy_latest_log
 }
 
+result_message() {
+  local status="$1"
+  local pdf_path="${output_pdf:-미지정}"
+  local html_path="${html_output:-저장 안 함}"
+  cat <<EOF
+$status
+
+PDF 저장 위치:
+$pdf_path
+
+HTML 저장 위치:
+$html_path
+
+로그:
+$LOG_FILE
+EOF
+}
+
 show_error() {
   local message="$1"
   /usr/bin/osascript - "$message" <<'APPLESCRIPT' >/dev/null 2>&1
@@ -53,13 +71,13 @@ copy_latest_log
 
 if [[ ! -x "$PYTHON_BIN" ]]; then
   log_line "ERROR: missing project venv: $PYTHON_BIN"
-  show_error "프로젝트 venv를 찾을 수 없습니다: $PYTHON_BIN"
+  show_error "$(result_message "실패: 프로젝트 venv를 찾을 수 없습니다.")"
   exit 1
 fi
 
 if ! command -v ntn >/dev/null 2>&1; then
   log_line "ERROR: ntn not found on PATH"
-  show_error "Notion CLI(ntn)를 찾을 수 없습니다. PATH에 ntn이 있는지 확인하세요."
+  show_error "$(result_message "실패: Notion CLI(ntn)를 찾을 수 없습니다.")"
   exit 1
 fi
 
@@ -149,7 +167,7 @@ APPLESCRIPT
   title_status="$?"
   copy_latest_log
   if [[ "$title_status" -ne 0 ]]; then
-    show_error "Notion 페이지 제목을 가져오지 못했습니다. 로그: $LOG_FILE"
+    show_error "$(result_message "실패: Notion 페이지 제목을 가져오지 못했습니다.")"
     exit "$title_status"
   fi
   if [[ -z "$page_title" ]]; then
@@ -179,7 +197,7 @@ fi
 
 if [[ -z "$notion_url" || -z "$output_pdf" ]]; then
   log_line "ERROR: missing notion URL or output PDF"
-  show_error "Notion 링크와 PDF 출력 경로가 필요합니다."
+  show_error "$(result_message "실패: Notion 링크와 PDF 출력 경로가 필요합니다.")"
   exit 1
 fi
 
@@ -209,7 +227,7 @@ copy_latest_log
 
 if [[ "$exit_status" -ne 0 ]]; then
   if [[ "$interactive" == "1" ]]; then
-    show_error "PDF 변환에 실패했습니다. 로그: $LOG_FILE"
+    show_error "$(result_message "실패: PDF 변환에 실패했습니다.")"
   else
     cat "$LOG_FILE" >&2
   fi
@@ -217,18 +235,12 @@ if [[ "$exit_status" -ne 0 ]]; then
 fi
 
 if [[ "$interactive" == "1" ]]; then
-  if [[ -n "$html_output" ]]; then
-    html_message="중간 HTML:
-$html_output"
-  else
-    html_message="중간 HTML은 저장하지 않았습니다."
-  fi
-
-  button="$(/usr/bin/osascript - "$output_pdf" "$html_message" <<'APPLESCRIPT'
+  success_message="$(result_message "성공: PDF 변환이 완료되었습니다.")"
+  button="$(/usr/bin/osascript - "$output_pdf" "$success_message" <<'APPLESCRIPT'
 on run argv
 set outputPath to item 1 of argv
-set htmlMessage to item 2 of argv
-display dialog "PDF 변환이 완료되었습니다." & return & outputPath & return & htmlMessage buttons {"OK", "Finder에서 보기", "PDF 열기"} default button "PDF 열기" with icon note
+set messageText to item 2 of argv
+display dialog messageText buttons {"OK", "Finder에서 보기", "PDF 열기"} default button "PDF 열기" with icon note
 return button returned of result
 end run
 APPLESCRIPT

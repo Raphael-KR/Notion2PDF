@@ -1,8 +1,8 @@
 #!/bin/zsh
 set -uo pipefail
 
-export PATH="/opt/homebrew/bin:/Users/raphael/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
-export HOME="${HOME:-/Users/raphael}"
+export HOME="${HOME:-/Users/$(/usr/bin/id -un)}"
+export PATH="/opt/homebrew/bin:$HOME/.local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
 
 APP_EXECUTABLE="$0"

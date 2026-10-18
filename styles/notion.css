@@ -82,6 +82,11 @@ p {
   margin: 0 0 9pt;
 }
 
+p.notion-subheading {
+  break-after: avoid;
+  break-inside: avoid;
+}
+
 strong {
   font-weight: 600;
 }

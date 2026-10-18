@@ -1,5 +1,7 @@
 # Notion2PDF
 
+현재 버전: **1.0.0 (빌드 3)** · [릴리스 노트](docs/releases/1.0.0.md)
+
 Convert Notion pages and static HTML/CSS to print-quality PDFs with WeasyPrint.
 
 Notion 페이지와 정적 HTML/CSS를 인쇄 품질 PDF로 변환하는 로컬 CLI/App 도구입니다. WeasyPrint를 사용해 A4 PDF를 만들고, Notion API JSON의 블록 색상, 목차, 다단, 표, 체크리스트 같은 구조를 가능한 한 HTML에 보존한 뒤 PDF로 렌더링합니다.
@@ -95,6 +97,15 @@ open dist/Notion2PDF.app
 
 앱을 더블클릭하면 Notion 링크와 PDF 저장 위치를 묻습니다. 내부적으로는 `ntn` 인증과 `notion_to_pdf.py`를 사용합니다.
 
+의존성 설정 후 응용프로그램 폴더에 설치·등록하려면:
+
+```bash
+zsh scripts/install_macos_app.sh
+/Applications/Notion2PDF.app/Contents/MacOS/Notion2PDF --version
+```
+
+이 앱은 독립 실행형 패키지가 아닙니다. 설치된 앱도 이 프로젝트의 `.venv`와 소스를 사용합니다. 프로젝트를 이동하면 설치 스크립트를 다시 실행하세요. 기존 설치 앱은 교체 전에 프로젝트의 `tmp/app-backups/`에 보존됩니다. 서명·공증된 일반 배포판은 아닙니다.
+
 앱 아이콘 원본은 `assets/Notion2PDF.png`입니다. 빌드 스크립트가 표준 크기별 이미지를 생성하고 앱의 `Contents/Resources/Notion2PDF.icns`로 묶습니다. 디자인 설명과 생성 프롬프트는 `assets/README.md`에 기록합니다.
 
 앱 워크플로우:
@@ -168,6 +179,7 @@ WeasyPrint 패키지 전체를 포함한 독립 실행형 앱으로 배포한다
 - `@font-face`로 `fonts/` 안의 Pretendard 파일을 불러와 한글 폰트를 PDF에 임베딩합니다.
 - `styles/notion.css`는 같은 본문 스타일을 쓰되 원본에 없는 header/footer/page number를 만들지 않습니다.
 - 짧은 항목명과 설명으로 구성된 2열 표는 첫 열의 최소 너비를 확보합니다. 다단은 본문 너비 안에서 간격을 확보하고, 한 페이지에 들어가는 다단 묶음은 함께 배치합니다. 판별 기준과 검증 범위는 `docs/layout-fix.md`를 참고하세요.
+- 전체가 굵은 짧은 문단형 소제목은 다음 내용의 시작과 같은 페이지에 배치합니다. 긴 코드 블록은 여러 페이지로 나눌 수 있습니다.
 
 ## Notion 스타일 보정 원칙
 

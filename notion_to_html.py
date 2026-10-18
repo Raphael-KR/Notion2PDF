@@ -289,6 +289,24 @@ def hydrate_children(client: Any, blocks: list[dict[str, Any]]) -> list[dict[str
     return blocks
 
 
+def is_paragraph_subheading(block: dict[str, Any]) -> bool:
+    """Recognize short, fully bold paragraphs without changing heading semantics."""
+    if block.get("type") != "paragraph":
+        return False
+    parts = block_value(block).get("rich_text", [])
+    text = plain_text_items(parts).strip()
+    return (
+        0 < len(text) <= 80
+        and "\n" not in text
+        and "\r" not in text
+        and all(
+            part.get("annotations", {}).get("bold", False)
+            for part in parts
+            if plain_text_items([part]).strip()
+        )
+    )
+
+
 def render_blocks(
     client: Any,
     blocks: list[dict[str, Any]],
@@ -332,8 +350,9 @@ def render_blocks(
         if block_type == "paragraph":
             content = rich_text(value.get("rich_text", []))
             empty_class = " notion-empty" if not content else ""
+            subheading_class = " notion-subheading" if is_paragraph_subheading(block) else ""
             html_blocks.append(
-                f'<p class="{block_classes(block)}{empty_class}" {data_attrs(block)}>{content}</p>'
+                f'<p class="{block_classes(block)}{empty_class}{subheading_class}" {data_attrs(block)}>{content}</p>'
             )
         elif block_type in {"heading_1", "heading_2", "heading_3", "heading_4"}:
             level = {"heading_1": 1, "heading_2": 2, "heading_3": 3, "heading_4": 4}[block_type]

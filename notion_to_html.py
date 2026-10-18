@@ -446,11 +446,32 @@ def render_child_blocks(
     return f"\n<div class=\"children\">{children}</div>" if children else ""
 
 
+def is_label_value_table(rows: list[dict[str, Any]], has_header: bool) -> bool:
+    """Conservatively identify two-column tables with short row labels."""
+    cells = [row.get("table_row", {}).get("cells", []) for row in rows]
+    if not cells or any(len(row) != 2 for row in cells):
+        return False
+    body = cells[1:] if has_header else cells
+    if not body:
+        return False
+    labels = [plain_text_items(row[0]).strip() for row in body]
+    values = [plain_text_items(row[1]).strip() for row in body]
+    return (
+        all(label and len(label) <= 12 and "\n" not in label for label in labels)
+        and sum(map(len, values)) > 2 * sum(map(len, labels))
+    )
+
+
 def render_table(client: Any, block: dict[str, Any]) -> str:
     table = block_value(block)
     rows = block.get("children")
     if rows is None:
         rows = client.block_children(block["id"])
+    layout_class = (
+        "label-value-table"
+        if is_label_value_table(rows, table.get("has_column_header", False))
+        else ""
+    )
     rendered_rows: list[str] = []
     for row_index, row in enumerate(rows):
         cells = row.get("table_row", {}).get("cells", [])
@@ -461,14 +482,14 @@ def render_table(client: Any, block: dict[str, Any]) -> str:
         rendered_rows.append(f'<tr class="{block_classes(row)}" {data_attrs(row)}>{rendered_cells}</tr>')
     if table.get("has_column_header") and rendered_rows:
         return (
-            f'<table class="{block_classes(block)}" {data_attrs(block)}>\n<thead>\n'
+            f'<table class="{block_classes(block, layout_class)}" {data_attrs(block)}>\n<thead>\n'
             + rendered_rows[0]
             + "\n</thead>\n<tbody>\n"
             + "\n".join(rendered_rows[1:])
             + "\n</tbody>\n</table>"
         )
     return (
-        f'<table class="{block_classes(block)}" {data_attrs(block)}>\n<tbody>\n'
+        f'<table class="{block_classes(block, layout_class)}" {data_attrs(block)}>\n<tbody>\n'
         + "\n".join(rendered_rows)
         + "\n</tbody>\n</table>"
     )

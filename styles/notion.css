@@ -204,21 +204,33 @@ blockquote[class*="_background"] {
   padding: 3pt 5pt;
 }
 
+.column-list {
+  break-inside: avoid;
+}
+
 .column-list > .children {
   border-collapse: separate;
-  border-spacing: 14pt 0;
+  border-spacing: 0;
   display: table;
   margin: 10pt 0 14pt;
   table-layout: fixed;
-  width: calc(100% + 28pt);
-  margin-left: -14pt;
+  width: 100%;
 }
 
 .column {
   display: table-cell;
   min-width: 0;
   vertical-align: top;
-  width: 50%;
+  width: auto;
+  padding: 0 7pt;
+}
+
+.column:first-child {
+  padding-left: 0;
+}
+
+.column:last-child {
+  padding-right: 0;
 }
 
 .column .children > :first-child {
@@ -235,6 +247,12 @@ table {
 
 thead {
   display: table-header-group;
+}
+
+/* Only short-label two-column tables receive a minimum label width. */
+.label-value-table > thead > tr > :first-child,
+.label-value-table > tbody > tr > :first-child {
+  min-width: 6em;
 }
 
 tfoot {

@@ -13,6 +13,8 @@
   <string>local.notion2pdf.app</string>
   <key>CFBundleInfoDictionaryVersion</key>
   <string>6.0</string>
+  <key>CFBundleIconFile</key>
+  <string>Notion2PDF</string>
   <key>CFBundleName</key>
   <string>Notion2PDF</string>
   <key>CFBundlePackageType</key>

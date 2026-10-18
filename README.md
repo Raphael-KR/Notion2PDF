@@ -95,6 +95,8 @@ open dist/Notion2PDF.app
 
 앱을 더블클릭하면 Notion 링크와 PDF 저장 위치를 묻습니다. 내부적으로는 `ntn` 인증과 `notion_to_pdf.py`를 사용합니다.
 
+앱 아이콘 원본은 `assets/Notion2PDF.png`입니다. 빌드 스크립트가 표준 크기별 이미지를 생성하고 앱의 `Contents/Resources/Notion2PDF.icns`로 묶습니다. 디자인 설명과 생성 프롬프트는 `assets/README.md`에 기록합니다.
+
 앱 워크플로우:
 
 1. Notion 링크를 입력합니다. 기본 macOS 입력창을 사용하므로 `⌘V` 붙여넣기가 동작합니다.

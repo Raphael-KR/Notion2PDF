@@ -167,6 +167,7 @@ WeasyPrint 패키지 전체를 포함한 독립 실행형 앱으로 배포한다
 - `.page-break { break-before: page; }`와 `.avoid-break { break-inside: avoid; }`로 페이지 나눔을 제어합니다.
 - `@font-face`로 `fonts/` 안의 Pretendard 파일을 불러와 한글 폰트를 PDF에 임베딩합니다.
 - `styles/notion.css`는 같은 본문 스타일을 쓰되 원본에 없는 header/footer/page number를 만들지 않습니다.
+- 짧은 항목명과 설명으로 구성된 2열 표는 첫 열의 최소 너비를 확보합니다. 다단은 본문 너비 안에서 간격을 확보하고, 한 페이지에 들어가는 다단 묶음은 함께 배치합니다. 판별 기준과 검증 범위는 `docs/layout-fix.md`를 참고하세요.
 
 ## Notion 스타일 보정 원칙
 
